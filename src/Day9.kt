@@ -1,3 +1,5 @@
+import kotlin.time.measureTimedValue
+
 typealias Day9Data = List<String>
 typealias Day9Result = Int
 
@@ -22,10 +24,6 @@ fun main() {
 //    check(testInput2.parse().part2() == TODO())
 
     val input = readInput("Day9")
-    printlnMeasureTimeMillis {
-        input.parse().part1().println()
-    }
-//    printlnMeasureTimeMillis {
-//        input.parse().part2().println()
-//    }
+    measureTimedValue { input.parse().part1() }.println()
+//    measureTimedValue { input.parse().part2() }.print()
 }

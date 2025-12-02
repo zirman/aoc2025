@@ -3,7 +3,7 @@ import java.security.MessageDigest
 import kotlin.io.path.Path
 import kotlin.io.path.readText
 import kotlin.math.absoluteValue
-import kotlin.system.measureTimeMillis
+import kotlin.time.TimedValue
 
 /**
  * Reads lines from the given input txt file.
@@ -16,16 +16,6 @@ fun readInput(name: String) = Path("src/$name.txt").readText().trim().lines()
 fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray()))
     .toString(16)
     .padStart(32, '0')
-
-/**
- * The cleaner shorthand for printing output.
- */
-fun Any?.println() = println(this)
-
-fun printlnMeasureTimeMillis(block: () -> Unit) {
-    measureTimeMillis(block)
-        .also { println("time: $it") }
-}
 
 data class Pos(val row: Int, val col: Int)
 
@@ -143,3 +133,8 @@ fun Pos.next(size: Size): List<Pos> = buildList {
 
 fun Pos.index(width: Int): Int = (row * width) + col
 fun Pos.index(size: Size): Int = (row * size.width) + col
+
+fun <T> TimedValue<T>.println() {
+    println("result: $value")
+    println("time: $duration")
+}

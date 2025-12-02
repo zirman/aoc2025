@@ -1,16 +1,18 @@
-typealias Day3Data = List<String>
-typealias Day3Result = Int
+import kotlin.time.measureTimedValue
+
+typealias Input3 = List<String>
+typealias Result3 = Int
 
 fun main() {
-    fun List<String>.parse(): Day3Data {
+    fun List<String>.parse(): Input3 {
         TODO()
     }
 
-    fun Day3Data.part1(): Day3Result {
+    fun Input3.part1(): Result3 {
         TODO()
     }
 
-    fun Day3Data.part2(): Day3Result {
+    fun Input3.part2(): Result3 {
         TODO()
     }
 
@@ -22,10 +24,6 @@ fun main() {
 //    check(testInput2.parse().part2() == TODO())
 
     val input = readInput("Day3")
-    printlnMeasureTimeMillis {
-        input.parse().part1().println()
-    }
-//    printlnMeasureTimeMillis {
-//        input.parse().part2().println()
-//    }
+    measureTimedValue { input.parse().part1() }.println()
+//    measureTimedValue { input.parse().part2() }.print()
 }

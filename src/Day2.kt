@@ -1,5 +1,7 @@
-typealias Day2Data = List<List<Long>>
-typealias Day2Result = Long
+import kotlin.time.measureTimedValue
+
+typealias Input2 = List<List<Long>>
+typealias Result2 = Long
 
 fun main() {
     fun Long.isInvalid1(): Boolean {
@@ -17,7 +19,7 @@ fun main() {
         var w = 1
         while (w <= s.length / 2) {
             if (s.length % w == 0) {
-                val u = s.windowed(size = w, step = w)
+                val u = s.chunked(w)
                 if (u.all { it == u[0] }) {
                     return true
                 }
@@ -27,12 +29,12 @@ fun main() {
         return false
     }
 
-    fun List<String>.parse(): Day2Data {
+    fun List<String>.parse(): Input2 {
         return flatMap { it.split(',') }
             .map { it.split('-').map { it.toLong() } }
     }
 
-    fun Day2Data.part1(): Day2Result {
+    fun Input2.part1(): Result2 {
         var sum: Long = 0
         forEach { (start, end) ->
             sum += (start..end).sumOf { if (it.isInvalid1()) it else 0 }
@@ -40,7 +42,7 @@ fun main() {
         return sum
     }
 
-    fun Day2Data.part2(): Day2Result {
+    fun Input2.part2(): Result2 {
         var sum: Long = 0
         forEach { (start, end) ->
             sum += (start..end).sumOf { if (it.isInvalid2()) it else 0 }
@@ -52,10 +54,6 @@ fun main() {
     check(testInput1.parse().part1() == 1227775554L)
     check(testInput1.parse().part2() == 4174379265L)
     val input = readInput("Day2")
-    printlnMeasureTimeMillis {
-        input.parse().part1().println()
-    }
-    printlnMeasureTimeMillis {
-        input.parse().part2().println()
-    }
+    measureTimedValue { input.parse().part1() }.println()
+    measureTimedValue { input.parse().part2() }.println()
 }

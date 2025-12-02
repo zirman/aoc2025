@@ -1,12 +1,14 @@
-typealias Day1Data = List<Pair<Char, Int>>
-typealias Day1Result = Int
+import kotlin.time.measureTimedValue
+
+typealias Input1 = List<Pair<Char, Int>>
+typealias Result1 = Int
 
 fun main() {
-    fun List<String>.parse(): Day1Data {
+    fun List<String>.parse(): Input1 {
         return map { line -> Pair(line[0], line.drop(1).toInt()) }
     }
 
-    fun Day1Data.part1(): Day1Result {
+    fun Input1.part1(): Result1 {
         var dial = 50
         var count = 0
         forEach { (dir, rot) ->
@@ -22,7 +24,7 @@ fun main() {
         return count
     }
 
-    fun Day1Data.part2(): Day1Result {
+    fun Input1.part2(): Result1 {
         var dial = 50
         var count = 0
         forEach { (dir, rot) ->
@@ -54,10 +56,6 @@ fun main() {
 //    val testInput2 = readInput("Day1_2_test")
     check(testInput1.parse().part2() == 6)
     val input = readInput("Day1")
-    printlnMeasureTimeMillis {
-        input.parse().part1().println()
-    }
-    printlnMeasureTimeMillis {
-        input.parse().part2().println()
-    }
+    measureTimedValue { input.parse().part1() }.println()
+    measureTimedValue { input.parse().part2() }.println()
 }
