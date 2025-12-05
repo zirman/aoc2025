@@ -24,13 +24,6 @@ fun Pos.goEast(): Pos = copy(col = col + 1)
 fun Pos.goNorth(): Pos = copy(row = row - 1)
 fun Pos.goSouth(): Pos = copy(row = row + 1)
 
-fun Pos.adjacencies(): List<Pos> = listOf(
-    goWest(),
-    goEast(),
-    goNorth(),
-    goSouth(),
-)
-
 operator fun Pos.minus(pos: Pos): Pos = Pos(
     row - pos.row,
     col - pos.col,
@@ -46,10 +39,11 @@ data class Size(val width: Int, val height: Int)
 
 fun <T> List<List<T>>.toSize2(): Size = Size(width = this[0].size, height = size)
 fun List<String>.toSize(): Size = Size(width = this[0].length, height = size)
+operator fun <T> List<List<T>>.get(pos: Pos): T = this[pos.row][pos.col]
 
 operator fun Size.contains(pos: Pos): Boolean =
     pos.row >= 0 && pos.row < height &&
-            pos.col >= 0 && pos.col < width
+        pos.col >= 0 && pos.col < width
 
 fun <T> List<T>.dropAt(index: Int): List<T> = filterIndexed { i, t -> index != i }
 
@@ -85,6 +79,22 @@ fun <T> List<T>.combinations(size: Int): List<List<T>> {
         }
     }
     return buildList {
+        recur(0, emptyList())
+    }
+}
+
+fun <T> List<T>.combinations2(size: Int): Sequence<List<T>> {
+    suspend fun SequenceScope<List<T>>.recur(i: Int, c: List<T>) {
+        if (c.size == size) {
+            this@recur.yield(c)
+            return
+        }
+
+        (i..<this@combinations2.size).forEach { t ->
+            recur(t + 1, c + this@combinations2[t])
+        }
+    }
+    return sequence {
         recur(0, emptyList())
     }
 }
@@ -131,6 +141,22 @@ fun Pos.next(size: Size): List<Pos> = buildList {
     this@next.goSouth().takeIf { it in size }?.let { add(it) }
 }
 
+fun Pos.nextWithDiag(size: Size): List<Pos> = buildList {
+    this@nextWithDiag.goWest().takeIf { it in size }?.let { w ->
+        w.goNorth().takeIf { it in size }?.let { add(it) }
+        add(w)
+        w.goSouth().takeIf { it in size }?.let { add(it) }
+    }
+    this@nextWithDiag.goNorth().takeIf { it in size }?.let { add(it) }
+    this@nextWithDiag.goEast().takeIf { it in size }?.let { e ->
+        e.goNorth().takeIf { it in size }?.let { add(it) }
+        add(e)
+        e.goSouth().takeIf { it in size }?.let { add(it) }
+    }
+    this@nextWithDiag.goSouth().takeIf { it in size }?.let { add(it) }
+}
+
+
 fun Pos.index(width: Int): Int = (row * width) + col
 fun Pos.index(size: Size): Int = (row * size.width) + col
 
@@ -138,3 +164,5 @@ fun <T> TimedValue<T>.println() {
     println("result: $value")
     println("time: $duration")
 }
+
+val spaceRegex = """\s+""".toRegex()

@@ -25,5 +25,5 @@ fun main() {
 
     val input = readInput("Day5")
     measureTimedValue { input.parse().part1() }.println()
-//    measureTimedValue { input.parse().part2() }.print()
+//    measureTimedValue { input.parse().part2() }.println()
 }
