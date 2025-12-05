@@ -3,6 +3,8 @@ complexity:
     active: false
   CyclomaticComplexMethod:
     active: false
+  ComplexCondition:
+    active: false
 style:
   MagicNumber:
     active: false

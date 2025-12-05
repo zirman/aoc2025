@@ -1,18 +1,18 @@
 import kotlin.time.measureTimedValue
 
-typealias Day12Data = List<String>
-typealias Day12Result = Int
+typealias Input12 = List<String>
+typealias Result12 = Int
 
 fun main() {
-    fun List<String>.parse(): Day12Data {
+    fun List<String>.parse(): Input12 {
         TODO()
     }
 
-    fun Day12Data.part1(): Day12Result {
+    fun Input12.part1(): Result12 {
         TODO()
     }
 
-    fun Day12Data.part2(): Day12Result {
+    fun Input12.part2(): Result12 {
         TODO()
     }
 
