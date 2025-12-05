@@ -50,14 +50,10 @@ fun main() {
         }
         return count
     }
-
     // test if implementation meets criteria from the description, like:
     val testInput1 = readInput("Day4_1_test")
     check(testInput1.parse().part1() == 13)
-
-//    val testInput2 = readInput("Day4_2_test")
     check(testInput1.parse().part2().also { println(it) } == 43)
-
     val input = readInput("Day4")
     measureTimedValue { input.parse().part1() }.println()
     measureTimedValue { input.parse().part2() }.println()

@@ -31,8 +31,7 @@ fun main() {
         }
         val r2 = first()
         return if (r1.first < r2.first && r1.last > r2.last) {
-            drop(1).recur(r1.first..<r2.first) +
-                drop(1).recur(r2.last + 1..r1.last)
+            drop(1).let { it.recur(r1.first..<r2.first) + it.recur(r2.last + 1..r1.last) }
         } else if (r1.first in r2) {
             if (r1.last in r2) {
                 emptyList()
@@ -47,18 +46,11 @@ fun main() {
     }
 
     fun Input5.part2(): Result5 {
-        var ranges = emptyList<LongRange>()
         val (fresh) = this
-        fresh.forEach { r ->
-            ranges = ranges + ranges.recur(r)
-        }
-        var count = 0L
-        ranges.forEach {
-            count += (it.last - it.first) + 1
-        }
-        return count
+        return fresh
+            .fold(emptyList<LongRange>()) { ranges, range -> ranges + ranges.recur(range) }
+            .fold(0L) { count, length -> count + (length.last - length.first) + 1 }
     }
-
     // test if implementation meets criteria from the description, like:
     val testInput1 = readInput("Day5_1_test")
     check(testInput1.parse().part1() == 3L)

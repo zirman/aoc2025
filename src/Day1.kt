@@ -53,7 +53,6 @@ fun main() {
     // test if implementation meets criteria from the description, like:
     val testInput1 = readInput("Day1_1_test")
     check(testInput1.parse().part1() == 3)
-//    val testInput2 = readInput("Day1_2_test")
     check(testInput1.parse().part2() == 6)
     val input = readInput("Day1")
     measureTimedValue { input.parse().part1() }.println()
