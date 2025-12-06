@@ -8,7 +8,7 @@ import kotlin.time.TimedValue
 /**
  * Reads lines from the given input txt file.
  */
-fun readInput(name: String) = Path("src/$name.txt").readText().trim().lines()
+fun readInput(name: String) = Path("src/$name.txt").readText().lines().dropLastWhile { it.isEmpty() }
 
 /**
  * Converts string to md5 hash.
@@ -43,7 +43,7 @@ operator fun <T> List<List<T>>.get(pos: Pos): T = this[pos.row][pos.col]
 
 operator fun Size.contains(pos: Pos): Boolean =
     pos.row >= 0 && pos.row < height &&
-        pos.col >= 0 && pos.col < width
+            pos.col >= 0 && pos.col < width
 
 fun <T> List<T>.dropAt(index: Int): List<T> = filterIndexed { i, t -> index != i }
 
