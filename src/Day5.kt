@@ -7,9 +7,9 @@ fun main() {
     fun List<String>.parse(): Input5 {
         val (fresh, avail) = joinToString("\n") { it }.split("\n\n")
         return Pair(
-            fresh.split("\n").map {
-                val (a, b) = it.split("-")
-                a.toLong()..b.toLong()
+            fresh.split("\n").map { line ->
+                val (a, b) = line.split("-").map { it.toLong() }
+                a..b
             },
             avail.split("\n").map { it.toLong() },
         )
@@ -49,7 +49,7 @@ fun main() {
         val (fresh) = this
         return fresh
             .fold(emptyList<LongRange>()) { ranges, range -> ranges + ranges.recur(range) }
-            .fold(0L) { count, length -> count + (length.last - length.first) + 1 }
+            .fold(0L) { count, range -> count + (range.last - range.first) + 1 }
     }
     // test if implementation meets criteria from the description, like:
     val testInput1 = readInput("Day5_1_test")
