@@ -18,6 +18,7 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
     .padStart(32, '0')
 
 data class Pos(val row: Int, val col: Int)
+data class Coord3(val x: Long, val y: Long, val z: Long)
 
 fun Pos.goWest(): Pos = copy(col = col - 1)
 fun Pos.goEast(): Pos = copy(col = col + 1)
