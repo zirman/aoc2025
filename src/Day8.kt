@@ -1,22 +1,14 @@
 import kotlin.time.measureTimedValue
 
-typealias Input8 = List<Coord3>
+typealias Input8 = List<Vec3>
 typealias Result8 = Long
 
 fun main() {
     fun List<String>.parse(): Input8 {
         return map { line ->
-            val (x, y, z) = line.split(",").map { it.toLong() }
-            Coord3(x, y, z)
+            val (x, y, z) = line.split(",").map { it.toInt() }
+            Vec3(x, y, z)
         }
-    }
-
-    infix operator fun Coord3.minus(pos: Coord3): Coord3 {
-        return Coord3(x - pos.x, y - pos.y, z - pos.z)
-    }
-
-    fun Coord3.dot(pos: Coord3): Long {
-        return (x * pos.x) + (y * pos.y) + (z * pos.z)
     }
 
     fun Input8.part1(connections: Int): Result8 {
@@ -59,20 +51,16 @@ fun main() {
             if (join.isNotEmpty()) {
                 circuits = (rest + listOf(join.reduce { acc, x -> acc + x }))
                 if (circuits.size == 1) {
-                    return this@part2[junctionBox1].x * this@part2[junctionBox2].x
+                    return this@part2[junctionBox1].x.toLong() * this@part2[junctionBox2].x
                 }
             }
         }
         error("never")
     }
 
-    // test if implementation meets criteria from the description, like:
     val testInput1 = readInput("Day8_1_test")
     check(testInput1.parse().part1(10) == 40L)
-
-//    val testInput2 = readInput("Day8_2_test")
     check(testInput1.parse().part2() == 25272L)
-
     val input = readInput("Day8")
     measureTimedValue { input.parse().part1(1000) }.println()
     measureTimedValue { input.parse().part2() }.println()

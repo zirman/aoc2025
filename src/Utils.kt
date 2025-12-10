@@ -18,7 +18,15 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
     .padStart(32, '0')
 
 data class Pos(val row: Int, val col: Int)
-data class Coord3(val x: Long, val y: Long, val z: Long)
+data class Vec3(val x: Int, val y: Int, val z: Int)
+
+infix operator fun Vec3.minus(pos: Vec3): Vec3 {
+    return Vec3(x - pos.x, y - pos.y, z - pos.z)
+}
+
+fun Vec3.dot(pos: Vec3): Long {
+    return (x.toLong() * pos.x) + (y.toLong() * pos.y) + (z.toLong() * pos.z)
+}
 
 fun Pos.goWest(): Pos = copy(col = col - 1)
 fun Pos.goEast(): Pos = copy(col = col + 1)
@@ -36,14 +44,17 @@ operator fun Pos.plus(pos: Pos): Pos = Pos(
 )
 
 fun Pos.manhattanDistance(pos: Pos): Int = (row - pos.row).absoluteValue + (col - pos.col).absoluteValue
-data class Size(val width: Int, val height: Int)
+data class Size(val width: Long, val height: Long)
 
-fun <T> List<List<T>>.toSize2(): Size = Size(width = this[0].size, height = size)
-fun List<String>.toSize(): Size = Size(width = this[0].length, height = size)
+fun <T> List<List<T>>.toSize2(): Size = Size(width = this[0].size.toLong(), height = size.toLong())
+fun List<String>.toSize(): Size = Size(width = this[0].length.toLong(), height = size.toLong())
 operator fun <T> List<List<T>>.get(pos: Pos): T = this[pos.row][pos.col]
+operator fun <T> List<MutableList<T>>.set(pos: Pos, v: T) {
+    this[pos.row][pos.col] = v
+}
 
 operator fun Size.contains(pos: Pos): Boolean =
-    pos.row >= 0 && pos.row < height &&
+    pos.row in 0..<height &&
             pos.col >= 0 && pos.col < width
 
 fun <T> List<T>.dropAt(index: Int): List<T> = filterIndexed { i, t -> index != i }
@@ -75,7 +86,7 @@ fun <T> List<T>.combinations(size: Int): List<List<T>> {
             return
         }
 
-        (i..<this@combinations.size).forEach { t ->
+        for (t in i..<this@combinations.size) {
             recur(t + 1, c + this@combinations[t])
         }
     }
@@ -91,7 +102,7 @@ fun <T> List<T>.combinations2(size: Int): Sequence<List<T>> {
             return
         }
 
-        (i..<this@combinations2.size).forEach { t ->
+        for (t in i..<this@combinations2.size) {
             recur(t + 1, c + this@combinations2[t])
         }
     }
@@ -158,8 +169,8 @@ fun Pos.nextWithDiag(size: Size): List<Pos> = buildList {
 }
 
 
-fun Pos.index(width: Int): Int = (row * width) + col
-fun Pos.index(size: Size): Int = (row * size.width) + col
+fun Pos.index(width: Long): Long = (row * width) + col
+fun Pos.index(size: Size): Long = (row * size.width) + col
 
 fun <T> TimedValue<T>.println() {
     println("result: $value")

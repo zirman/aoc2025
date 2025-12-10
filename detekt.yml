@@ -5,6 +5,10 @@ complexity:
     active: false
   ComplexCondition:
     active: false
+  NestedBlockDepth:
+    active: false
+  TooManyFunctions:
+    active: false
 style:
   MagicNumber:
     active: false
