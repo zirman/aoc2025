@@ -14,11 +14,7 @@ fun main() {
     fun Input11.part1(): Result11 {
         val memo = mutableMapOf<String, Long>()
         fun recur(from: String): Long = memo.getOrPut(from) {
-            return@getOrPut if (from == "out") {
-                1
-            } else {
-                getValue(from).fold(0L) { acc, x -> acc + recur(x) }
-            }
+            return@getOrPut if (from == "out") 1 else getValue(from).fold(0L) { acc, x -> acc + recur(x) }
         }
         return recur("you")
     }
