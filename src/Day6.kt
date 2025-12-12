@@ -1,7 +1,7 @@
 import kotlin.time.measureTimedValue
 
-typealias Input6 = List<List<String>>
-typealias Result6 = Long
+private typealias Input6 = List<List<String>>
+private typealias Result6 = Long
 
 fun main() {
     fun List<String>.parse(): Input6 = map { it.trim().split(spaceRegex) }

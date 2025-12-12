@@ -1,7 +1,7 @@
 import kotlin.time.measureTimedValue
 
-typealias Input2 = List<List<Long>>
-typealias Result2 = Long
+private typealias Input2 = List<List<Long>>
+private typealias Result2 = Long
 
 fun main() {
     fun Long.isInvalid1(): Boolean {

@@ -1,7 +1,7 @@
 import kotlin.time.measureTimedValue
 
-typealias Input8 = List<Vec3>
-typealias Result8 = Long
+private typealias Input8 = List<Vec3>
+private typealias Result8 = Long
 
 fun main() {
     fun List<String>.parse(): Input8 {

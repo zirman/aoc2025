@@ -2,8 +2,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.measureTimedValue
 
-typealias Input9 = List<Pos>
-typealias Result9 = Long
+private typealias Input9 = List<Pos>
+private typealias Result9 = Long
 
 fun main() {
     fun List<String>.parse(): Input9 {

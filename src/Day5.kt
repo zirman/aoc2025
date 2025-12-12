@@ -1,7 +1,7 @@
 import kotlin.time.measureTimedValue
 
-typealias Input5 = Pair<List<LongRange>, List<Long>>
-typealias Result5 = Long
+private typealias Input5 = Pair<List<LongRange>, List<Long>>
+private typealias Result5 = Long
 
 fun main() {
     fun List<String>.parse(): Input5 {

@@ -1,7 +1,7 @@
 import kotlin.time.measureTimedValue
 
-typealias Input1 = List<Pair<Char, Int>>
-typealias Result1 = Int
+private typealias Input1 = List<Pair<Char, Int>>
+private typealias Result1 = Int
 
 fun main() {
     fun List<String>.parse(): Input1 {
