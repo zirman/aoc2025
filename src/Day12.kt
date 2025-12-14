@@ -1,7 +1,7 @@
 import kotlin.math.max
 import kotlin.time.measureTimedValue
 
-private data class Input12(val shapes: List<Shape>, val regions: List<Region>)
+private data class Input12(val shapes: List<Stack>, val regions: List<Region>)
 private typealias Result12 = Long
 
 private data class Region(val width: Int, val length: Int, val presents: List<Int>)
@@ -10,7 +10,7 @@ private val shapeIndexRegex = """^(\d+):$""".toRegex()
 private val presentsRegex = """^(\d+)x(\d+): (\d+) (\d+) (\d+) (\d+) (\d+) (\d+)$""".toRegex()
 
 private data class Memo12(
-    val presents: Shape,
+    val presents: Stack,
     val width: Int,
     val length: Int,
     val a: Int,
@@ -21,29 +21,29 @@ private data class Memo12(
     val f: Int,
 )
 
-data class Shape(val bits: LongArray, val width: Int) {
+data class Stack(val boxes: Boxes, val width: Int) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Shape
+        other as Stack
 
         if (width != other.width) return false
-        if (!bits.contentEquals(other.bits)) return false
+        if (!boxes.contentEquals(other.boxes)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = width
-        result = 31 * result + bits.contentHashCode()
+        result = 31 * result + boxes.contentHashCode()
         return result
     }
 
     override fun toString(): String = buildString {
-        for (i in 0..<bits.size) {
+        for (i in 0..<boxes.size) {
             for (k in 1..width) {
-                if ((0b1L shl (Long.SIZE_BITS - k)) and bits[i] != 0L) {
+                if ((0b1L shl (Long.SIZE_BITS - k)) and boxes[i] != 0L) {
                     append('#')
                 } else {
                     append('.')
@@ -54,7 +54,7 @@ data class Shape(val bits: LongArray, val width: Int) {
     }
 }
 
-typealias Stack = LongArray
+typealias Boxes = LongArray
 
 fun main() {
     fun List<String>.parse(): Input12 {
@@ -67,8 +67,8 @@ fun main() {
                 val (index) = checkNotNull(shapeIndexRegex.matchEntire(lines.first())).destructured
                 assert(index.toInt() == i)
                 val bitsString = lines.drop(1)
-                Shape(
-                    bits = LongArray(bitsString.size) { i ->
+                Stack(
+                    boxes = Boxes(bitsString.size) { i ->
                         var lineBits = 0L
                         bitsString[i].forEachIndexed { k, c ->
                             when (c) {
@@ -108,28 +108,28 @@ fun main() {
         )
     }
 
-    fun Shape.rotate(): Shape {
-        return Shape(
-            bits = LongArray(width) { col ->
+    fun Stack.rotate(): Stack {
+        return Stack(
+            boxes = Boxes(width) { col ->
                 var acc = 0L
                 val mask = 0b1L shl (Long.SIZE_BITS - (width - col))
-                for (i in 0..<bits.size) {
-                    if (bits[i] and mask != 0L) {
+                for (i in 0..<boxes.size) {
+                    if (boxes[i] and mask != 0L) {
                         acc = acc or (0b1L shl (Long.SIZE_BITS - i - 1))
                     }
                 }
                 acc
             },
-            width = bits.size,
+            width = boxes.size,
         )
     }
 
-    fun Shape.flipX(): Shape {
-        return Shape(
-            bits = LongArray(bits.size) { col ->
+    fun Stack.flipX(): Stack {
+        return Stack(
+            boxes = Boxes(boxes.size) { col ->
                 var acc = 0L
                 for (i in 1..width) {
-                    acc = acc or (bits[col] and (0b1L shl (Long.SIZE_BITS - i)))
+                    acc = acc or (boxes[col] and (0b1L shl (Long.SIZE_BITS - i)))
                 }
                 acc
             },
@@ -137,22 +137,22 @@ fun main() {
         )
     }
 
-    fun Shape.flipY(): Shape {
-        return Shape(
-            bits = LongArray(bits.size) { col ->
-                bits[bits.size - col - 1]
+    fun Stack.flipY(): Stack {
+        return Stack(
+            boxes = Boxes(boxes.size) { col ->
+                boxes[boxes.size - col - 1]
             },
             width = width,
         )
     }
 
-    fun Shape.shift(x: Int, y: Int): Shape {
+    fun Stack.shift(x: Int, y: Int): Stack {
         assert(x in 0..Long.SIZE_BITS - width)
         assert(y >= 0)
-        return Shape(
-            bits = LongArray(bits.size + y) { row ->
-                if (row - y >= 0 && row - y < bits.size) {
-                    bits[row - y] ushr x
+        return Stack(
+            boxes = Boxes(boxes.size + y) { row ->
+                if (row - y >= 0 && row - y < boxes.size) {
+                    boxes[row - y] ushr x
                 } else {
                     0L
                 }
@@ -161,13 +161,13 @@ fun main() {
         )
     }
 
-    fun Shape.combine(shape: Shape): Shape? {
+    fun Stack.combine(shape: Stack): Stack? {
         val newWidth = max(width, shape.width)
-        return Shape(
-            bits = LongArray(max(bits.size, shape.bits.size)) { row ->
+        return Stack(
+            boxes = Boxes(max(boxes.size, shape.boxes.size)) { row ->
 
-                val lhs = if (row < bits.size) bits[row] else 0L
-                val rhs = if (row < shape.bits.size) shape.bits[row] else 0L
+                val lhs = if (row < boxes.size) boxes[row] else 0L
+                val rhs = if (row < shape.boxes.size) shape.boxes[row] else 0L
                 val acc = lhs xor rhs
                 if (lhs.countOneBits() + rhs.countOneBits() != acc.countOneBits()) {
                     return@combine null
@@ -178,8 +178,8 @@ fun main() {
         )
     }
 
-    fun Shape.countBoxes(): Int {
-        return bits.sumOf { it.countOneBits() }
+    fun Stack.countBoxes(): Int {
+        return boxes.sumOf { it.countOneBits() }
     }
 
     fun Input12.part1(): Result12 {
@@ -205,7 +205,7 @@ fun main() {
         }
         val memo = mutableMapOf<Memo12, Boolean>()
         fun recur(
-            presents: Shape,
+            presents: Stack,
             width: Int,
             length: Int,
             a: Int,
@@ -221,7 +221,7 @@ fun main() {
             if (a > 0) {
                 rotated.getValue(0).forEach { shape ->
                     for (x in 0..width - shape.width) {
-                        for (y in 0..length - shape.bits.size) {
+                        for (y in 0..length - shape.boxes.size) {
                             val s = shape.shift(x, y)
                             val p = presents.combine(s)
                             if (p != null) {
@@ -236,7 +236,7 @@ fun main() {
             if (b > 0) {
                 rotated.getValue(1).forEach { shape ->
                     for (x in 0..width - shape.width) {
-                        for (y in 0..length - shape.bits.size) {
+                        for (y in 0..length - shape.boxes.size) {
                             val s = shape.shift(x, y)
                             val p = presents.combine(s)
                             if (p != null) {
@@ -251,7 +251,7 @@ fun main() {
             if (c > 0) {
                 rotated.getValue(2).forEach { shape ->
                     for (x in 0..width - shape.width) {
-                        for (y in 0..length - shape.bits.size) {
+                        for (y in 0..length - shape.boxes.size) {
                             val s = shape.shift(x, y)
                             val p = presents.combine(s)
                             if (p != null) {
@@ -266,7 +266,7 @@ fun main() {
             if (d > 0) {
                 rotated.getValue(3).forEach { shape ->
                     for (x in 0..width - shape.width) {
-                        for (y in 0..length - shape.bits.size) {
+                        for (y in 0..length - shape.boxes.size) {
                             val s = shape.shift(x, y)
                             val p = presents.combine(s)
                             if (p != null) {
@@ -281,7 +281,7 @@ fun main() {
             if (e > 0) {
                 rotated.getValue(4).forEach { shape ->
                     for (x in 0..width - shape.width) {
-                        for (y in 0..length - shape.bits.size) {
+                        for (y in 0..length - shape.boxes.size) {
                             val s = shape.shift(x, y)
                             val p = presents.combine(s)
                             if (p != null) {
@@ -296,7 +296,7 @@ fun main() {
             if (f > 0) {
                 rotated.getValue(5).forEach { shape ->
                     for (x in 0..width - shape.width) {
-                        for (y in 0..length - shape.bits.size) {
+                        for (y in 0..length - shape.boxes.size) {
                             val s = shape.shift(x, y)
                             val p = presents.combine(s)
                             if (p != null) {
@@ -319,7 +319,7 @@ fun main() {
                 acc
             } else if (
                 recur(
-                    presents = Shape(LongArray(0) { 0L }, 0),
+                    presents = Stack(Boxes(0) { 0L }, 0),
                     width = region.width,
                     length = region.length,
                     a = region.presents[0],
