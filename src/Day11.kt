@@ -21,25 +21,22 @@ fun main() {
 
     fun Input11.part2(): Result11 {
         val memo = mutableMapOf<Triple<String, Boolean, Boolean>, Long>()
-        fun recur(prev: List<String>, from: String, dac: Boolean, fft: Boolean): Long =
-            memo.getOrPut(Triple(from, dac, fft)) {
-                return@getOrPut if (from == "out") {
-                    if (dac && fft) 1 else 0
-                } else {
-                    val prev = prev + from
-                    val dac = dac || from == "dac"
-                    val fft = fft || from == "fft"
-                    getValue(from).fold(0L) { acc, next ->
-                        acc + recur(
-                            prev = prev,
-                            from = next,
-                            dac = dac,
-                            fft = fft,
-                        )
-                    }
+        fun recur(from: String, dac: Boolean, fft: Boolean): Long = memo.getOrPut(Triple(from, dac, fft)) {
+            return@getOrPut if (from == "out") {
+                if (dac && fft) 1 else 0
+            } else {
+                val dac = dac || from == "dac"
+                val fft = fft || from == "fft"
+                getValue(from).fold(0L) { acc, next ->
+                    acc + recur(
+                        from = next,
+                        dac = dac,
+                        fft = fft,
+                    )
                 }
             }
-        return recur(prev = emptyList(), from = "svr", dac = false, fft = false)
+        }
+        return recur(from = "svr", dac = false, fft = false)
     }
 
     // test if implementation meets criteria from the description, like:
